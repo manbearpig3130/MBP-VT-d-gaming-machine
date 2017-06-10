@@ -11,7 +11,7 @@ Configuration:
 * Using '''libvirt QEMU/KVM with OVMF''': link to domain XMLs/scripts/notes: https://github.com/manbearpig3130/MBP-VT-d-gaming-machine
 * '''Host OS''': Arch Linux
 * '''Guest OS''': Windows 10 Pro
-* 2x 480GB SSDs set up in LVM striped mode formatted to ext4 are mounted in linux which contains the guest's qcow2 virtual disk.
+* 2x 480GB SSDs set up in LVM striped mode formatted to ext4 are mounted in linux which contains the guest's qcow2 virtual VirtIO disk.
 * USB Host controller is passed through, giving most USB ports to the VM, leaving my USB 3.1 controller with attached USB hub for the host.
 * Motherboard has two NICs, one is passed into VM (Works after installing Killer NIC Driver).
 * To get HDMI audio working in windows I have to roll back the HDMI audio drivers from AMD back to the default Windows driver in device manager for some reason.
