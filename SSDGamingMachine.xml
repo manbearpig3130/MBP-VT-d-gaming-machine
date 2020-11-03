@@ -1,98 +1,130 @@
-<domain type='kvm'>
+<domain type="kvm">
   <name>SSDGamingMachine</name>
   <uuid>e97245b2-56c1-45ea-8ea8-08e88158d3bf</uuid>
-  <memory unit='KiB'>16777216</memory>
-  <currentMemory unit='KiB'>16777216</currentMemory>
+  <description>Windows Gaming Machine</description>
+  <metadata>
+    <libosinfo:libosinfo xmlns:libosinfo="http://libosinfo.org/xmlns/libvirt/domain/1.0">
+      <libosinfo:os id="http://microsoft.com/win/10"/>
+    </libosinfo:libosinfo>
+  </metadata>
+  <memory unit="KiB">16777216</memory>
+  <currentMemory unit="KiB">16777216</currentMemory>
   <memoryBacking>
     <hugepages/>
   </memoryBacking>
-  <vcpu placement='static'>8</vcpu>
+  <vcpu placement="static">8</vcpu>
+  <iothreads>1</iothreads>
   <cputune>
-    <vcpupin vcpu='0' cpuset='6'/>
-    <vcpupin vcpu='1' cpuset='7'/>
-    <vcpupin vcpu='2' cpuset='8'/>
-    <vcpupin vcpu='3' cpuset='9'/>
-    <vcpupin vcpu='4' cpuset='10'/>
-    <vcpupin vcpu='5' cpuset='11'/>
-    <vcpupin vcpu='6' cpuset='0'/>
-    <vcpupin vcpu='7' cpuset='1'/>
+    <vcpupin vcpu="0" cpuset="2"/>
+    <vcpupin vcpu="1" cpuset="8"/>
+    <vcpupin vcpu="2" cpuset="3"/>
+    <vcpupin vcpu="3" cpuset="9"/>
+    <vcpupin vcpu="4" cpuset="4"/>
+    <vcpupin vcpu="5" cpuset="10"/>
+    <vcpupin vcpu="6" cpuset="5"/>
+    <vcpupin vcpu="7" cpuset="11"/>
+    <emulatorpin cpuset="0,6"/>
+    <iothreadpin iothread="1" cpuset="6"/>
   </cputune>
   <os>
-    <type arch='x86_64' machine='pc-i440fx-2.7'>hvm</type>
-    <loader readonly='yes' type='pflash'>/usr/share/ovmf/x64/ovmf_x64.bin</loader>
+    <type arch="x86_64" machine="pc-i440fx-2.7">hvm</type>
+    <loader readonly="yes" type="pflash">/usr/share/ovmf/ovmf_code_x64.bin</loader>
     <nvram>/var/lib/libvirt/qemu/nvram/SSDGamingMachine_VARS.fd</nvram>
-    <bootmenu enable='no'/>
+    <boot dev="hd"/>
+    <bootmenu enable="no"/>
   </os>
   <features>
     <acpi/>
     <apic/>
-    <vmport state='off'/>
+    <hyperv>
+      <relaxed state="on"/>
+      <vapic state="on"/>
+      <spinlocks state="on" retries="8191"/>
+      <vendor_id state="on" value="123456789ab"/>
+    </hyperv>
+    <kvm>
+      <hidden state="on"/>
+    </kvm>
+    <vmport state="off"/>
+    <ioapic driver="kvm"/>
   </features>
-  <cpu mode='host-passthrough' check='none'>
-    <topology sockets='1' cores='8' threads='1'/>
+  <cpu mode="host-passthrough" check="none" migratable="on">
+    <topology sockets="1" dies="1" cores="8" threads="1"/>
   </cpu>
-  <clock offset='utc'>
-    <timer name='rtc' tickpolicy='catchup'/>
-    <timer name='pit' tickpolicy='delay'/>
-    <timer name='hpet' present='no'/>
+  <clock offset="localtime">
+    <timer name="rtc" tickpolicy="catchup"/>
+    <timer name="pit" tickpolicy="delay"/>
+    <timer name="hpet" present="no"/>
+    <timer name="kvmclock" present="yes"/>
+    <timer name="hypervclock" present="yes"/>
   </clock>
   <on_poweroff>destroy</on_poweroff>
   <on_reboot>restart</on_reboot>
   <on_crash>restart</on_crash>
   <pm>
-    <suspend-to-mem enabled='no'/>
-    <suspend-to-disk enabled='no'/>
+    <suspend-to-mem enabled="no"/>
+    <suspend-to-disk enabled="no"/>
   </pm>
   <devices>
     <emulator>/usr/sbin/qemu-system-x86_64</emulator>
-    <disk type='file' device='disk'>
-      <driver name='qemu' type='qcow2'/>
-      <source file='/mnt/games/SSDGaming.qcow2'/>
-      <target dev='vda' bus='virtio'/>
-      <boot order='2'/>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x0b' function='0x0'/>
+    <disk type="file" device="disk">
+      <driver name="qemu" type="raw" iothread="1"/>
+      <source file="/mnt/nvme/SSDGaming.raw"/>
+      <target dev="vda" bus="virtio"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x03" function="0x0"/>
     </disk>
-    <controller type='scsi' index='0' model='virtio-scsi'>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x05' function='0x0'/>
+    <controller type="scsi" index="0" model="virtio-scsi">
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x05" function="0x0"/>
     </controller>
-    <controller type='pci' index='0' model='pci-root'/>
-    <controller type='usb' index='0' model='nec-xhci'>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x06' function='0x0'/>
+    <controller type="pci" index="0" model="pci-root"/>
+    <controller type="usb" index="0" model="nec-xhci">
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x06" function="0x0"/>
     </controller>
-    <input type='mouse' bus='ps2'/>
-    <input type='keyboard' bus='ps2'/>
-    <hostdev mode='subsystem' type='pci' managed='yes'>
+    <input type="mouse" bus="ps2"/>
+    <input type="keyboard" bus="ps2"/>
+    <hostdev mode="subsystem" type="pci" managed="yes">
       <source>
-        <address domain='0x0000' bus='0x03' slot='0x00' function='0x0'/>
+        <address domain="0x0000" bus="0x00" slot="0x14" function="0x0"/>
       </source>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x0'/>
+      <rom bar="on"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x0d" function="0x0"/>
     </hostdev>
-    <hostdev mode='subsystem' type='pci' managed='yes'>
+    <hostdev mode="subsystem" type="pci" managed="yes">
       <source>
-        <address domain='0x0000' bus='0x03' slot='0x00' function='0x1'/>
+        <address domain="0x0000" bus="0x0b" slot="0x00" function="0x0"/>
       </source>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x03' function='0x0'/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x02" function="0x0"/>
     </hostdev>
-    <hostdev mode='subsystem' type='pci' managed='yes'>
+    <hostdev mode="subsystem" type="pci" managed="yes">
       <source>
-        <address domain='0x0000' bus='0x0b' slot='0x00' function='0x0'/>
+        <address domain="0x0000" bus="0x04" slot="0x00" function="0x0"/>
       </source>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x04' function='0x0'/>
+      <rom bar="off"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x04" function="0x0"/>
     </hostdev>
-    <hostdev mode='subsystem' type='pci' managed='yes'>
+    <hostdev mode="subsystem" type="pci" managed="yes">
       <source>
-        <address domain='0x0000' bus='0x00' slot='0x1d' function='0x0'/>
+        <address domain="0x0000" bus="0x04" slot="0x00" function="0x1"/>
       </source>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x07' function='0x0'/>
+      <rom bar="off"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x0a" function="0x0"/>
     </hostdev>
-    <hostdev mode='subsystem' type='pci' managed='yes'>
+    <hostdev mode="subsystem" type="pci" managed="yes">
       <source>
-        <address domain='0x0000' bus='0x00' slot='0x14' function='0x0'/>
+        <address domain="0x0000" bus="0x04" slot="0x00" function="0x2"/>
       </source>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x09' function='0x0'/>
+      <rom bar="off"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x0e" function="0x0"/>
     </hostdev>
-    <memballoon model='virtio'>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x08' function='0x0'/>
+    <hostdev mode="subsystem" type="pci" managed="yes">
+      <source>
+        <address domain="0x0000" bus="0x04" slot="0x00" function="0x3"/>
+      </source>
+      <rom bar="off"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x0f" function="0x0"/>
+    </hostdev>
+    <memballoon model="virtio">
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x08" function="0x0"/>
     </memballoon>
   </devices>
 </domain>
