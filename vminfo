@@ -1,22 +1,53 @@
-'''Manbearpig3130's Virtual Gaming Machine:'''
+=== Manbearpig3130's Original Virtual Gaming Machine ===
+
 Hardware:
-* '''CPU''': Intel Core i7-6850K
-* '''Motherboard''': Gigabyte x99-Ultra Gaming-CF (Revision 1.0, BIOS/UEFI Version: F4)
-* '''Host GPU''': AMD R9 390
-* '''Guest GPU''': NVIDIA 2080TI
-* '''RAM''': 32GB G-Skill Ripjaws DDR4 3333MHz
+
+* '''CPU''': Intel Core i7-6850K 3.6GHz
+* '''Motherboard''': Gigabyte x99-Ultra Gaming (Revision 1.0, BIOS/UEFI Version: F4)
+* '''Host GPU''': AMD Radeon HD6950 1GB
+* '''Guest GPU''': AMD R9 390 8GB
+* '''RAM''': 32GB G-Skill Ripjaws DDR4 running at 3200MHz
 
 Configuration:
-* '''Host Kernel''': Kernel version Linux 5.3.12.1-1. Having trouble booting VM with newer kernels at the moment.
+
+* '''Host Kernel''': Kernel version Linux 4.7.2-1.
 * Using '''libvirt QEMU/KVM with OVMF''': link to domain XMLs/scripts/notes: https://github.com/manbearpig3130/MBP-VT-d-gaming-machine
 * '''Host OS''': Arch Linux
 * '''Guest OS''': Windows 10 Pro
-* 2TB Intel 660P NVMe SSD containing the .raw image file for guest OS. Attempted PCI passthrough without success. Apparently SM2262 chipsets are troublesome, will try again one day.
+* 2x 480GB SSDs set up in LVM striped mode (with mdadm) formatted to ext4 are mounted in linux which contains the guest's qcow2 virtual VirtIO disk file.
 * USB Host controller is passed through, giving most USB ports to the VM, leaving my USB 3.1 controller with attached USB hub for the host.
-* Motherboard has two NICs, one is passed into VM (Works after installing Killer NIC Driver).
+* Motherboard has two NICs, one is passed into VM (Works perfectly after installing Killer NIC Driver).
 * VM gets dedicated 16GB RAM via static hugepages.
 * CPU pinning increased performance considerably.
-* Windows boots straight into Steam big picture mode on it's primary display. 
-* Runs Valve Index flawlessly. 2080TI also includes USB-C port which the index is plugged into.
-* Setting up IOthreads properly greatly helped with stuttering during high disk usage (steam downloads)
-Overall an awesome gaming machine that meets my gaming needs and wants for GNU/Linux at the same time.
+* Windows boots straight into Steam big picture mode on primary display (43" Sony Bravia). Overall an awesome gaming machine that meets my gaming needs and wants for GNU/Linux at the same time.
+
+'''Quirks''':
+
+* I sometimes have to reinstall the AMD drivers in Windows to get HDMI audio working properly, or roll back to Windows HDMI driver. I normally use a USB headset which works fine anyway.
+
+=== Manbearpig3130's Evolved Virtual Gaming Machine ===
+
+Hardware:
+
+* '''CPU''': Intel Core i7-6850K 3.6GHz
+* '''Motherboard''': Gigabyte x99-Ultra Gaming (Revision 1.0, BIOS/UEFI Version: F4)
+* '''Host GPU''': AMD Radeon R9 390
+* '''Guest GPU''': Nvidia 2080ti 
+* '''RAM''': 32GB G-Skill Ripjaws DDR4 running at 3200MHz
+
+Configuration:
+
+* '''Host Kernel''': Kernel version Linux 5.3.12-arch1-1
+* Using '''libvirt QEMU/KVM with OVMF''': link to domain XMLs/scripts/notes: https://github.com/manbearpig3130/MBP-VT-d-gaming-machine
+* '''Host OS''': Arch Linux
+* '''Guest OS''': Windows 10 Pro
+* 2TB Intel 660P NVMe SSD passed through as storage. This needed a firmware update (sm2262 chipset) to pass through properly, but now that it works I also have the option to boot directly into Windows exclusively if I want to
+* USB Host controller is passed through, giving most USB ports to the VM, leaving my USB 3.1 controller with attached USB hub for the host.
+* Motherboard has two NICs, one is passed into VM (Works perfectly after installing Killer NIC Driver).
+* VM gets dedicated 16GB RAM via static hugepages.
+* CPU pinning increased performance considerably.
+* Windows boots straight into Steam big picture mode on primary display.
+* Intel 9260 Wifi + Bluetooth M.2 card passed through for Xbox Series X/S controller
+* Valve Index VR headset works perfectly in VM
+* '''Quirks''':
+* I have issues with one of my USB controllers, it seems like it stutters or resets. I can mitigate this by plugging devices into other USB busses, such as that on the 2080ti and also my USB 3.1 bus. This problem only occues in Windows. I originally thought it was due to it being in a VM, but since I set up my NVMe passthrough and can boot into Windows directly now I still have the same problem. Doesn't happen at all on Linux
