@@ -6,12 +6,12 @@ Hardware:
 * CPU: Intel Core i7-6850K
 * Motherboard: Gigabyte x99-Ultra Gaming-CF (Revision 1.0, BIOS/UEFI Version: F4)
 * Host GPU: AMD R9 390
-* Guest GPU' NVIDIA 2080TI
+* Guest GPU' NVIDIA 2080Ti
 * RAM: 32GB G-Skill Ripjaws DDR4 3333MHz
 * Guest Storage: 2TB Intel 660P NVMe SSD
 
 Configuration:
-* Host Kernel: version Linux 5.3.12.1-1. Having trouble booting VM with newer kernels at the moment.
+* Host Kernel: version Linux 5.18.14-arch1-1
 * Using libvirt QEMU/KVM with OVMF: link to domain XMLs/scripts/notes: https://github.com/manbearpig3130/MBP-VT-d-gaming-machine
 * Host OS: Arch Linux
 * Guest OS: Windows 10 Pro
@@ -25,4 +25,4 @@ Configuration:
 * Setting up IOthreads properly greatly helped with stuttering during high disk usage (steam downloads)
 * Intel 9260 M.2 Wifi + Bluetooth card passed through as well so I can connect Xbox series X/S controller
 
-Overall an awesome machine that runs games pretty much flawlessly. Took a while to get configuration to where it is but haven't had any game issues specific to running in a VM.
+Overall an awesome machine that runs games pretty much flawlessly with the exception of Flight Simulator 2020, but I have the option to boot into bare-metal to get full performance at least.
