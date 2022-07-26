@@ -22,7 +22,6 @@ Configuration:
 * CPU pinning increased performance considerably.
 * Windows boots straight into Steam big picture mode on its primary display. 
 * Runs Valve Index flawlessly. 2080TI also includes USB-C port which the index is plugged into.
-* Setting up IOthreads properly greatly helped with stuttering during high disk usage (steam downloads)
 * Intel 9260 M.2 Wifi + Bluetooth card passed through as well so I can connect Xbox series X/S controller
 
 Overall an awesome machine that runs games pretty much flawlessly with the exception of Flight Simulator 2020, but I have the option to boot into bare-metal to get full performance at least.
