@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# This is my /etc/libvirt/hooks/qemu 
+# hook for CPU core isolation and setting frequency governor
+
+vmname=$1
+command=$2
+
+if [ "$vmname" = "SSDGamingMachine" -a "$command" = "started" ]; then
+    systemctl set-property --runtime -- system.slice AllowedCPUs=0,1,6,7
+    systemctl set-property --runtime -- user.slice AllowedCPUs=0,1,6,7
+    systemctl set-property --runtime -- init.scope AllowedCPUs=0,1,6,7
+    cpupower -c 2 frequency-set -g performance
+    cpupower -c 3 frequency-set -g performance
+    cpupower -c 4 frequency-set -g performance
+    cpupower -c 5 frequency-set -g performance
+    cpupower -c 8 frequency-set -g performance
+    cpupower -c 9 frequency-set -g performance
+    cpupower -c 10 frequency-set -g performance
+    cpupower -c 11 frequency-set -g performance
+elif [ "$vmname" = "SSDGamingMachine" -a "$command" = "release" ]; then
+    systemctl set-property --runtime -- system.slice AllowedCPUs=0-11
+    systemctl set-property --runtime -- user.slice AllowedCPUs=0-11
+    systemctl set-property --runtime -- init.scope AllowedCPUs=0-11
+    cpupower frequency-set -g schedutil
+fi
