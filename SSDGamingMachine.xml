@@ -13,7 +13,6 @@
     <hugepages/>
   </memoryBacking>
   <vcpu placement="static">8</vcpu>
-  <iothreads>1</iothreads>
   <cputune>
     <vcpupin vcpu="0" cpuset="2"/>
     <vcpupin vcpu="1" cpuset="8"/>
@@ -24,32 +23,33 @@
     <vcpupin vcpu="6" cpuset="5"/>
     <vcpupin vcpu="7" cpuset="11"/>
     <emulatorpin cpuset="0,6"/>
-    <iothreadpin iothread="1" cpuset="6"/>
   </cputune>
   <os>
-    <type arch="x86_64" machine="pc-i440fx-2.7">hvm</type>
-    <loader readonly="yes" type="pflash">/usr/share/ovmf/ovmf_code_x64.bin</loader>
+    <type arch="x86_64" machine="pc-q35-7.0">hvm</type>
+    <loader readonly="yes" type="pflash">/usr/share/ovmf/x64/OVMF_CODE.fd</loader>
     <nvram>/var/lib/libvirt/qemu/nvram/SSDGamingMachine_VARS.fd</nvram>
-    <boot dev="hd"/>
     <bootmenu enable="no"/>
   </os>
   <features>
     <acpi/>
     <apic/>
-    <hyperv>
+    <hyperv mode="custom">
       <relaxed state="on"/>
       <vapic state="on"/>
       <spinlocks state="on" retries="8191"/>
-      <vendor_id state="on" value="123456789ab"/>
+      <vpindex state="on"/>
+      <synic state="on"/>
+      <stimer state="on"/>
+      <reset state="on"/>
     </hyperv>
     <kvm>
-      <hidden state="on"/>
+      <hint-dedicated state="on"/>
     </kvm>
     <vmport state="off"/>
     <ioapic driver="kvm"/>
   </features>
   <cpu mode="host-passthrough" check="none" migratable="on">
-    <topology sockets="1" dies="1" cores="8" threads="1"/>
+    <topology sockets="1" dies="1" cores="4" threads="2"/>
   </cpu>
   <clock offset="localtime">
     <timer name="rtc" tickpolicy="catchup"/>
@@ -67,61 +67,125 @@
   </pm>
   <devices>
     <emulator>/usr/sbin/qemu-system-x86_64</emulator>
-    <disk type="file" device="disk">
-      <driver name="qemu" type="raw" iothread="1"/>
-      <source file="/mnt/nvme/SSDGaming.raw"/>
-      <target dev="vda" bus="virtio"/>
-      <address type="pci" domain="0x0000" bus="0x00" slot="0x03" function="0x0"/>
-    </disk>
-    <controller type="scsi" index="0" model="virtio-scsi">
-      <address type="pci" domain="0x0000" bus="0x00" slot="0x05" function="0x0"/>
+    <controller type="pci" index="0" model="pcie-root"/>
+    <controller type="pci" index="1" model="pcie-root-port">
+      <model name="pcie-root-port"/>
+      <target chassis="1" port="0x8"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x01" function="0x0" multifunction="on"/>
     </controller>
-    <controller type="pci" index="0" model="pci-root"/>
+    <controller type="pci" index="2" model="pcie-root-port">
+      <model name="pcie-root-port"/>
+      <target chassis="2" port="0x9"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x01" function="0x1"/>
+    </controller>
+    <controller type="pci" index="3" model="pcie-root-port">
+      <model name="pcie-root-port"/>
+      <target chassis="3" port="0xa"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x01" function="0x2"/>
+    </controller>
+    <controller type="pci" index="4" model="pcie-to-pci-bridge">
+      <model name="pcie-pci-bridge"/>
+      <address type="pci" domain="0x0000" bus="0x01" slot="0x00" function="0x0"/>
+    </controller>
+    <controller type="pci" index="5" model="pcie-root-port">
+      <model name="pcie-root-port"/>
+      <target chassis="5" port="0xb"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x01" function="0x3"/>
+    </controller>
+    <controller type="pci" index="6" model="pcie-root-port">
+      <model name="pcie-root-port"/>
+      <target chassis="6" port="0xc"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x01" function="0x4"/>
+    </controller>
+    <controller type="pci" index="7" model="pcie-root-port">
+      <model name="pcie-root-port"/>
+      <target chassis="7" port="0xd"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x01" function="0x5"/>
+    </controller>
+    <controller type="pci" index="8" model="pcie-root-port">
+      <model name="pcie-root-port"/>
+      <target chassis="8" port="0xe"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x01" function="0x6"/>
+    </controller>
+    <controller type="pci" index="9" model="pcie-root-port">
+      <model name="pcie-root-port"/>
+      <target chassis="9" port="0xf"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x01" function="0x7"/>
+    </controller>
+    <controller type="pci" index="10" model="pcie-root-port">
+      <model name="pcie-root-port"/>
+      <target chassis="10" port="0x10"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x02" function="0x0"/>
+    </controller>
     <controller type="usb" index="0" model="nec-xhci">
       <address type="pci" domain="0x0000" bus="0x00" slot="0x06" function="0x0"/>
     </controller>
+    <controller type="sata" index="0">
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x1f" function="0x2"/>
+    </controller>
+    <controller type="virtio-serial" index="0">
+      <address type="pci" domain="0x0000" bus="0x08" slot="0x00" function="0x0"/>
+    </controller>
     <input type="mouse" bus="ps2"/>
     <input type="keyboard" bus="ps2"/>
+    <graphics type="spice" autoport="yes">
+      <listen type="address"/>
+      <image compression="off"/>
+      <gl enable="no"/>
+    </graphics>
+    <audio id="1" type="none"/>
+    <video>
+      <model type="cirrus" vram="16384" heads="1" primary="yes"/>
+      <address type="pci" domain="0x0000" bus="0x04" slot="0x02" function="0x0"/>
+    </video>
     <hostdev mode="subsystem" type="pci" managed="yes">
       <source>
-        <address domain="0x0000" bus="0x00" slot="0x14" function="0x0"/>
+        <address domain="0x0000" bus="0x02" slot="0x00" function="0x0"/>
       </source>
-      <rom bar="on"/>
-      <address type="pci" domain="0x0000" bus="0x00" slot="0x0d" function="0x0"/>
+      <boot order="1"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x03" function="0x0"/>
+    </hostdev>
+    <hostdev mode="subsystem" type="pci" managed="yes">
+      <source>
+        <address domain="0x0000" bus="0x0c" slot="0x00" function="0x0"/>
+      </source>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x0b" function="0x0"/>
     </hostdev>
     <hostdev mode="subsystem" type="pci" managed="yes">
       <source>
         <address domain="0x0000" bus="0x0b" slot="0x00" function="0x0"/>
       </source>
-      <address type="pci" domain="0x0000" bus="0x00" slot="0x02" function="0x0"/>
+      <address type="pci" domain="0x0000" bus="0x02" slot="0x00" function="0x0"/>
+    </hostdev>
+    <hostdev mode="subsystem" type="pci" managed="yes">
+      <source>
+        <address domain="0x0000" bus="0x00" slot="0x14" function="0x0"/>
+      </source>
+      <address type="pci" domain="0x0000" bus="0x04" slot="0x01" function="0x0"/>
     </hostdev>
     <hostdev mode="subsystem" type="pci" managed="yes">
       <source>
         <address domain="0x0000" bus="0x04" slot="0x00" function="0x0"/>
       </source>
-      <rom bar="off"/>
-      <address type="pci" domain="0x0000" bus="0x00" slot="0x04" function="0x0"/>
+      <address type="pci" domain="0x0000" bus="0x03" slot="0x00" function="0x0"/>
     </hostdev>
     <hostdev mode="subsystem" type="pci" managed="yes">
       <source>
         <address domain="0x0000" bus="0x04" slot="0x00" function="0x1"/>
       </source>
-      <rom bar="off"/>
-      <address type="pci" domain="0x0000" bus="0x00" slot="0x0a" function="0x0"/>
+      <address type="pci" domain="0x0000" bus="0x05" slot="0x00" function="0x0"/>
     </hostdev>
     <hostdev mode="subsystem" type="pci" managed="yes">
       <source>
         <address domain="0x0000" bus="0x04" slot="0x00" function="0x2"/>
       </source>
-      <rom bar="off"/>
-      <address type="pci" domain="0x0000" bus="0x00" slot="0x0e" function="0x0"/>
+      <address type="pci" domain="0x0000" bus="0x06" slot="0x00" function="0x0"/>
     </hostdev>
     <hostdev mode="subsystem" type="pci" managed="yes">
       <source>
         <address domain="0x0000" bus="0x04" slot="0x00" function="0x3"/>
       </source>
-      <rom bar="off"/>
-      <address type="pci" domain="0x0000" bus="0x00" slot="0x0f" function="0x0"/>
+      <address type="pci" domain="0x0000" bus="0x07" slot="0x00" function="0x0"/>
     </hostdev>
     <memballoon model="virtio">
       <address type="pci" domain="0x0000" bus="0x00" slot="0x08" function="0x0"/>
